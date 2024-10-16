@@ -1,0 +1,90 @@
+﻿@page "/editproduits"
+@using TD1Client.ViewModels
+@inject EditProduitViewModel ViewModel
+
+<PageTitle>Modifier Produit</PageTitle>
+
+<h3>Modifier un Produit</h3>
+
+<div class="mb-3">
+    <label for="searchTerm" class="form-label">Rechercher un produit</label>
+    <InputText id="searchTerm" @bind-Value="ViewModel.SearchTerm" class="form-control" @oninput="HandleInput" />
+</div>
+
+@if (ViewModel.IsLoading)
+{
+    <p><em>Chargement des produits...</em></p>
+}
+@if (ViewModel.SearchResults.Any())
+{
+    <ul class="list-group mb-3">
+        @foreach (var produit in ViewModel.SearchResults)
+        {
+            <li class="list-group-item " style="cursor: pointer;" @onclick="@(() => ViewModel.SelectedProduitForEdit = produit)">
+                @produit.NomProduit
+            </li>
+        }
+    </ul>
+}
+
+
+@if (ViewModel.SelectedProduitForEdit == null)
+{
+    <p>Aucun produit sélectionné.</p>
+}
+else
+{
+    <EditForm Model="ViewModel.SelectedProduitForEdit" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label for="nomProduit" class="form-label">Nom du produit</label>
+            <InputText id="nomProduit" @bind-Value="ViewModel.SelectedProduitForEdit.NomProduit" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <InputTextArea id="description" @bind-Value="ViewModel.SelectedProduitForEdit.Description" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="uriPhoto" class="form-label">Image</label>
+            <InputText id="uriPhoto" @bind-Value="ViewModel.SelectedProduitForEdit.UriPhoto" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="idMarque" class="form-label">Marque</label>
+            <InputNumber id="idMarque" @bind-Value="ViewModel.SelectedProduitForEdit.IdMarque" class="form-control" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Sauvegarder les modifications</button>
+    </EditForm>
+}
+
+@if (!string.IsNullOrWhiteSpace(ViewModel.SuccessMessage))
+{
+    <div class="alert alert-success mt-3">
+        @ViewModel.SuccessMessage
+    </div>
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await ViewModel.LoadProduitsAsync();
+    }
+
+    private async Task HandleInput(ChangeEventArgs e)
+    {
+        // Met à jour le terme de recherche et effectue une recherche si la valeur change
+        ViewModel.SearchTerm = e.Value.ToString();
+        await ViewModel.SearchProduit();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        await ViewModel.UpdateProduitAsync();
+        ViewModel.SuccessMessage = "Produit mis à jour avec succès!";
+    }
+}

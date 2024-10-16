@@ -1,0 +1,77 @@
+﻿@page "/addproduits"
+@using TD1Client.Models
+@using TD1Client.Services
+@using TD1Client.ViewModels
+@inject AddProduitsViewModel ViewModel
+
+<h1>Ajout de produit</h1>
+
+<p>Cette page permet d'ajouter des produits.</p>
+
+<EditForm Model="ViewModel.NewProduit" OnValidSubmit="HandleValidSubmit" FormName="AddProduitForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="nomProduit" class="form-label">Nom du produit</label>
+        <InputText id="nomProduit" @bind-Value="ViewModel.NewProduit.NomProduit" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <InputTextArea id="description" @bind-Value="ViewModel.NewProduit.Description" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="uriPhoto" class="form-label">Image</label>
+        <InputText id="uriPhoto" @bind-Value="ViewModel.NewProduit.UriPhoto" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="idMarque" class="form-label">Marque</label>
+        <InputNumber id="idMarque" @bind-Value="ViewModel.NewProduit.IdMarque" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="idTypeProduit" class="form-label">Type de produit</label>
+        <InputNumber id="idTypeProduit" @bind-Value="ViewModel.NewProduit.IdTypeProduit" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="stockReel" class="form-label">Stock réel</label>
+        <InputNumber id="stockReel" @bind-Value="ViewModel.NewProduit.StockReel" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="stockMin" class="form-label">Stock minimum</label>
+        <InputNumber id="stockMin" @bind-Value="ViewModel.NewProduit.StockMin" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="stockMax" class="form-label">Stock maximum</label>
+        <InputNumber id="stockMax" @bind-Value="ViewModel.NewProduit.StockMax" class="form-control" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Ajouter le produit</button>
+</EditForm>
+
+@if (ViewModel.SuccessMessage != null)
+{
+    <div class="alert alert-success mt-3">
+        @ViewModel.SuccessMessage
+    </div>
+}
+
+@if (ViewModel.ErrorMessage != null)
+{
+    <div class="alert alert-danger mt-3">
+        @ViewModel.ErrorMessage
+    </div>
+}
+
+@code {
+    private async Task HandleValidSubmit()
+    {
+        await ViewModel.SubmitProduitAsync();
+    }
+}

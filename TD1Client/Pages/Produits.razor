@@ -1,0 +1,58 @@
+﻿@page "/produits"
+@using TD1Client.ViewModels
+@inject ProduitViewModel ViewModel
+
+<PageTitle>Produits</PageTitle>
+
+<h3>Liste des Produits</h3>
+
+@if (ViewModel.IsLoading)
+{
+    <p><em>Chargement des produits...</em></p>
+}
+else if (ViewModel.Produits.Count == 0)
+{
+    <p>Aucun produit trouvé.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Nom</th>
+                <th>Description</th>
+                <th>Marque</th>
+                <th>Type Produit</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var produit in ViewModel.Produits)
+            {
+                <tr>
+                    <td>
+                        @if (!string.IsNullOrEmpty(produit.UriPhoto))
+                        {
+                            <img src="@produit.UriPhoto" alt="@produit.NomProduit" style="max-width: 100px; max-height: 100px;" />
+                        }
+                        else
+                        {
+                            <span>Aucune image</span>
+                        }
+                    </td>
+                    <td>@produit.NomProduit</td>
+                    <td>@produit.Description</td>
+                    <td>@produit.Marque</td> 
+                    <td>@produit.Type</td> 
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await ViewModel.LoadDataAsync();
+    }
+}

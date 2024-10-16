@@ -1,0 +1,43 @@
+﻿@page "/marques"
+
+@inject IService<Marque> marqueService
+
+<PageTitle>Marques</PageTitle>
+
+<h3>Liste des Marques</h3>
+
+@if (marques == null)
+{
+    <p>Chargement des marques...</p>
+}
+else if (marques.Count == 0)
+{
+    <p>Aucune marque trouvée.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nom</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var marque in marques)
+            {
+                <tr>
+                    <td>@marque.NomMarque</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Marque>? marques;
+
+    protected override async Task OnInitializedAsync()
+    {
+        marques = await marqueService.GetAllAsync();
+    }
+}
